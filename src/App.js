@@ -1,23 +1,38 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
+  const [combinedNumbers, setCombinedNumbers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCombinedNumbers = async () => {
+      try {
+        const response = await fetch('http://localhost:8008/numbers?url=http://20.244.56.144/numbers');
+        const data = await response.json();
+        setCombinedNumbers(data.numbers);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchCombinedNumbers();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Combined Numbers</h1>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {combinedNumbers.map((number, index) => (
+            <li key={index}>{number}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
